@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
-import { FaUserCheck } from "react-icons/fa";
+import { FaEye, FaUserCheck } from "react-icons/fa";
 import { IoPersonRemoveSharp } from "react-icons/io5";
 import { FaTrashCan } from "react-icons/fa6";
 import Swal from "sweetalert2";
@@ -10,7 +10,7 @@ const ApproveRiders = () => {
   const axiosSecure = useAxiosSecure();
 
   const {refetch, data: riders = [] } = useQuery({
-    queryKey: ["/riders", "pending"],
+    queryKey: ["riders", "pending"],
     queryFn: async () => {
       const res = await axiosSecure.get("/riders");
       return res.data;
@@ -39,7 +39,42 @@ const ApproveRiders = () => {
 
   const handleRejected = rider =>{
     riderUpdateStatus(rider, 'reject')
-  }
+  };
+   // View rider details
+  const handleView = (rider) => {
+    Swal.fire({
+      title: `${rider.name} - Details`,
+      html: `
+        <p><strong>Email:</strong> ${rider.email}</p>
+        <p><strong>District:</strong> ${rider.district}</p>
+        <p><strong>Status:</strong> ${rider.status}</p>
+        <p><strong>Phone:</strong> ${rider.phone || "N/A"}</p>
+      `,
+      confirmButtonText: "Close",
+    });
+  };
+
+  // Delete rider
+  const handleDelete = (rider) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: `Do you want to delete ${rider.name}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axiosSecure.delete(`/riders/${rider._id}`).then((res) => {
+          if (res.data.deletedCount) {
+            refetch();
+            Swal.fire("Deleted!", `${rider.name} has been deleted.`, "success");
+          }
+        });
+      }
+    });
+  };
 
   return (
     <div>
@@ -69,6 +104,12 @@ const ApproveRiders = () => {
                 </td>
                 <td>
                   <button
+                    onClick={() => handleView(rider)}
+                    className="btn "
+                  >
+                    <FaEye></FaEye>
+                  </button>
+                  <button
                     onClick={() => handleApproval(rider)}
                     className="btn "
                   >
@@ -77,7 +118,9 @@ const ApproveRiders = () => {
                   <button onClick={()=>handleRejected (rider)} className="btn ">
                     <IoPersonRemoveSharp></IoPersonRemoveSharp>
                   </button>
-                  <button className="btn ">
+                  <button 
+                  onClick={() => handleDelete(rider)}
+                  className="btn ">
                     <FaTrashCan></FaTrashCan>
                   </button>
                 </td>
