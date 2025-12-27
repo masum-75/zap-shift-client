@@ -1,41 +1,50 @@
 import { createBrowserRouter } from "react-router";
-import RootLayOut from "../Layouts/RootLayOut";
+
+import RootLayOut from "../layouts/RootLayOut";
 import Home from "../pages/Home/Home/Home";
-import Coverage from "../pages/coverage/Coverage";
-import AuthLayouts from "../Layouts/AuthLayouts";
-import Login from "../pages/Auth/Login/Login";
-import Register from "../pages/Auth/Register/Register";
+import Coverage from "../pages/Coverage/Coverage";
+import AuthLayouts from "../layouts/AuthLayouts";
 import PrivateRoute from "./PrivateRoute";
 import Rider from "../pages/rider/Rider";
 import SendParcel from "../pages/sendParcel/SendParcel";
+import ParcelTrack from "../pages/ParcelTrack/ParcelTrack";
+import Login from "../pages/Auth/Login/Login";
+import Register from "../pages/Auth/Register/Register";
+
 import DashboardLayouts from "../Layouts/DashboardLayouts";
+import DashboardHome from "../pages/dashboard/DashboardHome/DashboardHome";
 import MyParcels from "../pages/dashboard/myParcels/MyParcels";
 import Payment from "../pages/dashboard/Payment/Payment";
+import PaymentHistory from "../pages/dashboard/PaymentHistory/PaymentHistory";
 import PaymentSuccess from "../pages/dashboard/Payment/PaymentSuccess";
 import PaymentCancelled from "../pages/dashboard/Payment/PaymentCancelled";
-import PaymentHistory from "../pages/dashboard/PaymentHistory/PaymentHistory";
 import ApproveRiders from "../pages/dashboard/ApproveRiders/ApproveRiders";
+import AssignedDeliveries from "../pages/dashboard/AssignedDeliveries/AssignedDeliveries";
+import CompletedDeliveries from "../pages/dashboard/CompletedDeliveries/CompletedDeliveries";
+import AssignRiders from "../pages/dashboard/AssignRiders/AssignRiders";
 import UsersManagement from "../pages/dashboard/UsersManagement/UsersManagement";
+
 import AdminRoute from "./AdminRoute";
+import RiderRoute from "./RiderRoute";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    Component: RootLayOut,
+    element: <RootLayOut />,
     children: [
       {
         index: true,
-        Component: Home,
+        element: <Home />
       },
       {
         path: "rider",
         element: (
           <PrivateRoute>
-            <Rider></Rider>
+            <Rider />
           </PrivateRoute>
         ),
         loader: () =>
-          fetch("/public/data/warehouses.json").then((res) => res.json()),
+          fetch("../../public/data/division.json").then(res => res.json())
       },
       {
         path: "send-parcel",
@@ -45,79 +54,112 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
         loader: () =>
-          fetch("/public/data/warehouses.json").then((res) => res.json()),
+          fetch("../../public/data/division.json").then(res => res.json())
       },
       {
         path: "coverage",
-        Component: Coverage,
+        element: <Coverage />,
         loader: () =>
-          fetch("/public/data/warehouses.json").then((res) => res.json()),
+          fetch("../../public/data/warehouses.json").then(res => res.json())
       },
-    ],
+      {
+        path: "parcel-track/:trackingId",
+        element: <ParcelTrack />
+      }
+    ]
   },
+
   {
     path: "/",
-    Component: AuthLayouts,
+    element: <AuthLayouts />,
     children: [
       {
         path: "login",
-        Component: Login,
+        element: <Login />
       },
       {
         path: "register",
-        Component: Register,
-      },
-    ],
+        element: <Register />
+      }
+    ]
   },
+
   {
     path: "dashboard",
     element: (
       <PrivateRoute>
-        <DashboardLayouts></DashboardLayouts>
+        <DashboardLayouts />
       </PrivateRoute>
     ),
     children: [
       {
+        index: true,
+        element: <DashboardHome />
+      },
+      {
         path: "my-parcels",
-        Component: MyParcels,
+        element: <MyParcels />
+      },
+      {
+        path: "payment/:parcelId",
+        element: <Payment />
       },
       {
         path: "payment-history",
-        Component: PaymentHistory,
+        element: <PaymentHistory />
       },
+      {
+        path: "payment-success",
+        element: <PaymentSuccess />
+      },
+      {
+        path: "payment-cancelled",
+        element: <PaymentCancelled />
+      },
+
+      // rider only
+      {
+        path: "assigned-deliveries",
+        element: (
+          <RiderRoute>
+            <AssignedDeliveries />
+          </RiderRoute>
+        )
+      },
+      {
+        path: "completed-deliveries",
+        element: (
+          <RiderRoute>
+            <CompletedDeliveries />
+          </RiderRoute>
+        )
+      },
+
+      // admin only
       {
         path: "approve-riders",
         element: (
           <AdminRoute>
-            <ApproveRiders></ApproveRiders>
+            <ApproveRiders />
           </AdminRoute>
-        ),
+        )
+      },
+      {
+        path: "assign-riders",
+        element: (
+          <AdminRoute>
+            <AssignRiders />
+          </AdminRoute>
+        )
       },
       {
         path: "users-management",
         element: (
           <AdminRoute>
-            <UsersManagement></UsersManagement>
+            <UsersManagement />
           </AdminRoute>
-        ),
-      },
-
-      {
-        path: "payment/:parcelId",
-        Component: Payment,
-      },
-      {
-        path: "payment-success",
-        Component: PaymentSuccess,
-      },
-      {
-        path: "payment-cancelled",
-        Component: PaymentCancelled,
-      },
-      {
-        path: "payment-history",
-        Component: PaymentHistory,
-      },
-    ],
-  },
+        )
+      }
+    ]
+  }
 ]);

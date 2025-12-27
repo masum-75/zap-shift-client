@@ -1,167 +1,124 @@
-import React from "react";
-import { useForm, useWatch } from "react-hook-form";
-import UseAuth from "../../hooks/UseAuth";
-import useAxiosSecure from "../../hooks/useAxiosSecure";
-import { useLoaderData } from "react-router";
-import Swal from "sweetalert2";
+import React from 'react';
+import { useForm, useWatch } from 'react-hook-form';
+import useAuth from '../../hooks/useAuth';
+import useAxiosSecure from '../../hooks/useAxiosSecure';
+import { useLoaderData } from 'react-router';
+import Swal from 'sweetalert2';
 
 const Rider = () => {
-  const {
-    register,
-    handleSubmit,
-    control,
-    // formState: { errors },
-  } = useForm();
-  const { user } = UseAuth();
+    const {
+        register,
+        handleSubmit,
+        control,
+        // formState: { errors } 
+    } = useForm();
+    const { user } = useAuth();
+    const axiosSecure = useAxiosSecure();
 
-  const axiosSecure = useAxiosSecure();
+    const serviceCenters = useLoaderData();
+    const regionsDuplicate = serviceCenters.map(c => c.region);
 
-  const serviceCenters = useLoaderData();
-  const regionsDuplicate = serviceCenters.map((c) => c.region);
-  const regions = [...new Set(regionsDuplicate)];
-  //   explore useWatch,useMemo useCallBack
-  const districtByRegions = (region) => {
-    const regionDistricts = serviceCenters.filter((c) => c.region === region);
-    const districts = regionDistricts.map((d) => d.district);
-    return districts;
-  };
+    const regions = [...new Set(regionsDuplicate)];
+    // explore useMemo useCallback
+    const districtsByRegion = (region) => {
+        const regionDistricts = serviceCenters.filter(c => c.region === region);
+        const districts = regionDistricts.map(d => d.district);
+        return districts;
+    }
 
-  const riderRegion = useWatch({ control, name: "region" });
+    const riderRegion = useWatch({ control, name: 'region' });
 
-  const handleRiderApplication = (data) => {
-    console.log(data);
-    axiosSecure.post("/riders", data).then((res) => {
-      if (res.data.insertedId) {
-        Swal.fire({
-          position: "top-end",
-          icon: "success",
-          title:
-            "Your Application has been submitted. we will reach to you soon",
-          showConfirmButton: false,
-          timer: 2500,
-        });
-      }
-    });
-  };
-  return (
-    <div>
-      <h2 className="text-4xl font-bold">Be A Rider</h2>
-      <form
-        onSubmit={handleSubmit(handleRiderApplication)}
-        className="mt-12 p-4 text-black"
-      >
-        {/* sender and Receiver info */}
-        <div className="grid-cols-1 gap-12">
-          {/* sender details */}
-          <fieldset className="fieldset">
-            <h2 className="text-2xl font-semibold">Rider Details</h2>
-            {/* name */}
-            <label className="label">Your Name</label>
-            <input
-              type="text"
-              {...register("name")}
-              defaultValue={user?.displayName}
-              className="input w-full"
-              placeholder="Rider Name"
-            />
-            {/* Email */}
-            <label className="label">Your Email</label>
-            <input
-              type="text"
-              {...register("email")}
-              defaultValue={user?.email}
-              className="input w-full"
-              placeholder="Rider Email"
-            />
-            {/* phone number */}
-            <label className="label">Your Phone Number</label>
-            <input
-              type="tel"
-              {...register("phone")}
-              className="input w-full"
-              placeholder="Your Phone Number"
-            />
-            {/* NID number */}
-            <label className="label">Your NID Number</label>
-            <input
-              type="tel"
-              {...register("nid")}
-              className="input w-full"
-              placeholder="Your NID Number"
-            />
-            {/* region */}
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">Your Region</legend>
-              <select
-                defaultValue="Pick a Region"
-                {...register("region")}
-                className="select"
-              >
-                <option disabled={true}>Pick a Region</option>
-                {regions.map((r, i) => (
-                  <option key={i} value={r}>
-                    {r}
-                  </option>
-                ))}
-              </select>
-            </fieldset>
+    const handleRiderApplication = data => {
+        console.log(data);
+        axiosSecure.post('/riders', data)
+            .then(res => {
+                if (res.data.insertedId) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Your application has been submitted. We will reach to you in 145 days",
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }
+            })
+    }
+    return (
+        <div>
+            <h2 className="text-4xl text-primary">Be a Rider</h2>
+            <form onSubmit={handleSubmit(handleRiderApplication)} className='mt-12 p-4 text-black'>
 
-            {/* district */}
+                {/* two column */}
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-12'>
+                    {/* rider Details */}
 
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">Your District</legend>
-              <select
-                defaultValue="Pick a District"
-                {...register("district")}
-                className="select"
-              >
-                <option disabled={true}>Pick a District</option>
-                {districtByRegions(riderRegion).map((r, i) => (
-                  <option key={i} value={r}>
-                    {r}
-                  </option>
-                ))}
-              </select>
-            </fieldset>
+                    <fieldset className="fieldset">
+                        <h4 className="text-2xl font-semibold">Rider Details</h4>
+                        {/* rider name */}
+                        <label className="label">Rider Name</label>
+                        <input type="text" {...register('name')}
+                            defaultValue={user?.displayName}
+                            className="input w-full" placeholder="Sender Name" />
 
-            {/* address */}
-            <label className="label">Your Address</label>
-            <input
-              type="text"
-              {...register("address")}
-              className="input w-full"
-              placeholder="Your Address"
-            />
-          </fieldset>
+                        {/* rider email */}
+                        <label className="label">Email</label>
+                        <input type="text" {...register('email')}
+                            defaultValue={user?.email}
+                            className="input w-full" placeholder="Sender Email" />
 
-          <fieldset className="fieldset">
-            {/* Email*/}
-            <label className="label">BIKE</label>
-            <input
-              type="text"
-              {...register("bike")}
-              className="input w-full"
-              placeholder="Bike"
-            />
+                        {/* rider region */}
+                        <fieldset className="fieldset">
+                            <legend className="fieldset-legend">Regions</legend>
+                            <select {...register('region')} defaultValue="Pick a region" className="select">
+                                <option disabled={true}>Pick a region</option>
+                                {
+                                    regions.map((r, i) => <option key={i} value={r}>{r}</option>)
+                                }
+                            </select>
+                        </fieldset>
 
-            {/* instruction */}
-            <label className="label">Delivery Instruction</label>
-            <textarea
-              {...register("deliveryInstruction")}
-              className="textarea input w-full"
-              placeholder="Delivery Instruction..."
-              rows={4}
-            />
-          </fieldset>
+                        {/* rider districts */}
+                        <fieldset className="fieldset">
+                            <legend className="fieldset-legend">Districts</legend>
+                            <select {...register('district')} defaultValue="Pick a district" className="select">
+                                <option disabled={true}>Pick a district</option>
+                                {
+                                    districtsByRegion(riderRegion).map((r, i) => <option key={i} value={r}>{r}</option>)
+                                }
+                            </select>
+                        </fieldset>
+
+
+                        {/* rider address */}
+                        <label className="label mt-4">Your Address</label>
+                        <input type="text" {...register('address')} className="input w-full" placeholder="Sender Address" />
+
+
+                    </fieldset>
+                    {/* receiver Details */}
+                    <fieldset className="fieldset">
+                        <h4 className="text-2xl font-semibold">More Details</h4>
+                        {/* receiver name */}
+                        <label className="label">Driving License</label>
+                        <input type="text" {...register('license')} className="input w-full" placeholder="Driving License" />
+
+                        {/* receiver email */}
+                        <label className="label">NID</label>
+                        <input type="text" {...register('nid')} className="input w-full" placeholder="NID" />
+
+
+                        {/* Bike */}
+                        <label className="label mt-4">BIKE</label>
+                        <input type="text" {...register('bike')} className="input w-full" placeholder="Bike" />
+                        {/*  address */}
+
+
+                    </fieldset>
+                </div>
+                <input type="submit" className='btn btn-primary mt-8 text-black' value="Apply as a Rider" />
+            </form>
         </div>
-        <input
-          type="submit"
-          className="btn bg-[#CAEB66] mt-8 text-black"
-          value="Apply as a rider"
-        />
-      </form>
-    </div>
-  );
+    );
 };
 
 export default Rider;

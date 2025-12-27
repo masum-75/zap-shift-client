@@ -1,13 +1,13 @@
 import React from 'react';
-import Logo from '../components/logo/Logo';
-import authImage from '../assets/authImage.png'
-import { Outlet } from 'react-router';
 
-const AuthLayouts = () => {
+import { Outlet } from 'react-router';
+import authImage from '../assets/authImage.png'
+import Logo from '../components/logo/Logo';
+const AuthLayout = () => {
     return (
         <div className='max-w-7xl mx-auto'>
             <Logo></Logo>
-            <div className='flex justify-between items-center mt-8'>
+            <div className='flex items-center'>
                 <div className='flex-1'>
                     <Outlet></Outlet>
                 </div>
@@ -19,4 +19,4 @@ const AuthLayouts = () => {
     );
 };
 
-export default AuthLayouts;
+export default AuthLayout;
