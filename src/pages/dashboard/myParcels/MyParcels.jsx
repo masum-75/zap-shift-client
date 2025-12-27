@@ -71,6 +71,7 @@ const MyParcels = () => {
               <th>Name</th>
               <th>Cost</th>
               <th>Payment</th>
+              <th>Tracking ID</th>
               <th>Delivery Status</th>
               <th>Action</th>
             </tr>
@@ -89,6 +90,7 @@ const MyParcels = () => {
                   //   <button className="btn btn-sm bg-[#CAEB66] text-black">pay</button>
                   // </Link>
                     }</td>
+                <td>{parcel.trackingId}</td>
                 <td>{parcel.deliveryStatus}</td>
                 <td className="">
                   <button className="btn btn-square hover:bg-[#CAEB66]">

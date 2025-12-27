@@ -41,7 +41,7 @@ export const router = createBrowserRouter([
         path: "send-parcel",
         element: (
           <PrivateRoute>
-            <SendParcel></SendParcel>,
+            <SendParcel />
           </PrivateRoute>
         ),
         loader: () =>
@@ -70,42 +70,54 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: 'dashboard',
-    element: <PrivateRoute><DashboardLayouts></DashboardLayouts></PrivateRoute>,
-    children:[
+    path: "dashboard",
+    element: (
+      <PrivateRoute>
+        <DashboardLayouts></DashboardLayouts>
+      </PrivateRoute>
+    ),
+    children: [
       {
-        path:'my-parcels',
+        path: "my-parcels",
         Component: MyParcels,
       },
       {
-        path:'payment-history',
-        Component: PaymentHistory
+        path: "payment-history",
+        Component: PaymentHistory,
       },
       {
-        path: 'approve-riders',
-        element: <AdminRoute><ApproveRiders></ApproveRiders></AdminRoute>
+        path: "approve-riders",
+        element: (
+          <AdminRoute>
+            <ApproveRiders></ApproveRiders>
+          </AdminRoute>
+        ),
       },
       {
-        path:'users-management',
-        element: <AdminRoute><UsersManagement></UsersManagement></AdminRoute>
+        path: "users-management",
+        element: (
+          <AdminRoute>
+            <UsersManagement></UsersManagement>
+          </AdminRoute>
+        ),
       },
 
       {
-        path:'payment/:parcelId',
-        Component:Payment,
+        path: "payment/:parcelId",
+        Component: Payment,
       },
       {
-        path: 'payment-success',
-        Component: PaymentSuccess
+        path: "payment-success",
+        Component: PaymentSuccess,
       },
       {
-        path: 'payment-cancelled',
-        Component: PaymentCancelled
+        path: "payment-cancelled",
+        Component: PaymentCancelled,
       },
       {
-        path:'payment-history',
-        Component: PaymentHistory
-      }
-    ]
-  }
+        path: "payment-history",
+        Component: PaymentHistory,
+      },
+    ],
+  },
 ]);

@@ -100,6 +100,13 @@ const DashboardLayouts = () => {
             </li>
             <li>
                 <NavLink className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                data-tip="assignRiders" to='/dashboard/assign-riders'>
+                    <FaMotorcycle></FaMotorcycle>
+                    <span className="is-drawer-close:hidden">Assign Riders</span>
+                    </NavLink>
+            </li>
+            <li>
+                <NavLink className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                 data-tip="Users Management" to='/dashboard/users-management'>
                     <FaUsers></FaUsers>
                     <span className="is-drawer-close:hidden">Users Management</span>
